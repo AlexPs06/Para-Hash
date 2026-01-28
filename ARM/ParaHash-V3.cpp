@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <cstring>
+#include <stdlib.h>
 #include "ParaHash-V3.h"
 
 void KeyExpansion(const uint8_t* key, uint8x16_t* roundKeys);
@@ -181,6 +182,7 @@ void generate_keys(uint8x16_t* roundKeys, uint64_t length, uint8x16_t * obtained
             AES_Encrypt_rounds(vreinterpretq_u8_u32(idx0),
                                roundKeys, 8);
 
+        
 
         /*
          * Generate a pseudo-random mask for block Y.
@@ -188,6 +190,9 @@ void generate_keys(uint8x16_t* roundKeys, uint64_t length, uint8x16_t * obtained
         uint8x16_t generate_key_y =
             AES_Encrypt_rounds(vreinterpretq_u8_u32(idx1),
                                roundKeys, 8);
+
+
+       
 
         /*
          * Save the keys in memory.
@@ -225,7 +230,6 @@ uint8x16_t AES_Encrypt_rounds( uint8x16_t block, const uint8x16_t* roundKeys, in
     }
     block = vaeseq_u8(block, roundKeys[rounds-1]);    // SubBytes y ShiftRows
     block = vaesmcq_u8(block);                        // MixColumns
-
     block = veorq_u8(block, roundKeys[rounds]);       // AddRoundKey
     // Guardar el bloque cifrado
     // vst1q_u8(output, block);
@@ -239,6 +243,8 @@ static inline void update_function(uint32x4_t X,
                     const uint8x16_t *roundKeys_ones,
                     uint64x2_t * output)
 {
+
+   
     /*
      * Perform two rounds of AES encryption on X using an all-zero round key.
      * The result is reinterpreted as two 64-bit polynomials.
@@ -254,6 +260,8 @@ static inline void update_function(uint32x4_t X,
     poly64x2_t Y_prime = vreinterpretq_p64_u8(
         AES_Encrypt_rounds(vreinterpretq_u8_u32(Y), roundKeys_ones, 2)
     );
+
+    
 
     /*
      * Reinterpret X and Y to 64-bit polynomial components.
@@ -309,13 +317,27 @@ static inline void update_function(uint32x4_t X,
 
 
     /*
+     * Final reduction step:
+     * Each 128-bit accumulator is reduced to a 64-bit value
+     * x64+x4+x3+x+1
+     * using the GF(2^128) reduction function.
+     */
+    uint64x2_t output_reduction_1;
+    output_reduction_1[0] =  gf_reduce_128(mul_acc[0][1], mul_acc[0][0]);
+    output_reduction_1[1] =  gf_reduce_128(mul_acc[1][1], mul_acc[1][0]);
+
+    uint64x2_t output_reduction_2;
+    output_reduction_2[0] =  gf_reduce_128(mul_acc[2][1], mul_acc[2][0]);
+    output_reduction_2[1] =  gf_reduce_128(mul_acc[3][1], mul_acc[3][0]);
+
+    /*
      * Accumulate the results into the output buffer using
      * standard 64-bit integer addition (with carry per lane).
      */
-    for (int i = 0; i < 4; i++) {
-        output[i] = vaddq_u64(mul_acc[i], output[i]);
-    }
+    output[0] = vaddq_u64(output_reduction_1, output[0]);
+    output[1] = vaddq_u64(output_reduction_2, output[1]);
 
+    
 
 
 
@@ -371,6 +393,9 @@ void ParaHash_V3(const uint8_t* input,
         uint8x16_t generate_key_x = keys[i];
         uint8x16_t generate_key_y = keys[i+1];
 
+
+        
+
         /*
          * XOR input blocks with the generated masks and
          * reinterpret them as 32-bit word vectors.
@@ -390,22 +415,11 @@ void ParaHash_V3(const uint8_t* input,
     }
 
     /*
-     * Final reduction step:
-     * Each 128-bit accumulator is reduced to a 64-bit value
-     * x64+x4+x3+x+1
-     * using the GF(2^128) reduction function.
-     */
-    for ( i = 0; i < 4; i++) {
-        output_reduction[i] =
-            gf_reduce_128(output[i][0], output[i][1]);
-    }
-
-    /*
      * Final tag generation.
      * Currently, the tag is obtained by reinterpreting the
      * reduced output values as a byte array.
      */
-        memcpy(tag, output_reduction, 32);  
+    memcpy(tag, output, 32);  
 
 }
 
@@ -413,6 +427,8 @@ void ParaHash_V3(const uint8_t* input,
 
 static uint64_t gf_reduce_128(uint64_t hi, uint64_t lo)
 {
+
+    
     /* First fold: reduce x^64 terms */
     lo ^= hi;
     lo ^= hi << 1;
@@ -446,54 +462,7 @@ void store_tag(uint8_t *tag, uint64_t r[4])
     for (int i = 0; i < 4; i++)
         store_u64_be(tag + 8*i, r[i]);
 }
-// int main() {
 
-//     // Clave de 128 bits (16 bytes)
-//     ALIGN(16) uint8_t key_1[16] = {
-//         0x2b,0x28,0xab,0x09, 
-//         0x7e,0xae,0xf7,0xff, 
-//         0x15,0xd2,0x15,0x4f, 
-//         0x16,0xa6,0x88,0x3c
-//     };
-
-//     // Clave de 128 bits (16 bytes)
-//     ALIGN(16) uint8_t key_2[16] = {
-//         0x3b,0x28,0xab,0x09, 
-//         0x7e,0xae,0xf7,0xff, 
-//         0x15,0xd2,0x15,0x4f, 
-//         0x16,0xa6,0x88,0x3c
-//     };
-
-//     // Texto plano de 128 bits (16 bytes)
-//     ALIGN(16) uint8_t plaintext[size_message] = {
-//         0x00, 0x00, 0x01, 0x01, 0x03, 0x03, 0x07, 0x07,  
-//         0x0f, 0x0f, 0x1f, 0x1f, 0x3f, 0x3f, 0x7f, 0x7f,
-//     };
-
-//     for (int i = 0; i < size_message; i++)
-//     {
-//         plaintext[i]=i;
-//     }
-//     plaintext[0]=20;
-        
-//     // Resultado del cifrado (16 bytes)
-//     ALIGN(16) uint8_t tag[8*Toeplitz_matrix];
-//     for (int i = 0; i < 8*Toeplitz_matrix; i++){
-//         tag[i]=0;
-//     }
-    
-
-//     NHT(plaintext, tag, key_1, key_2, size_message);
-
-//     // Imprimir el resultado cifrado
-//     printf("TAG: ");
-//     for (int i = 0; i < 8*Toeplitz_matrix; i++) {
-//         printf("%02x ", tag[i]);
-//     }
-//     printf("\n");
-
-//     return 0;
-// }
 
 
 
