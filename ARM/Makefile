@@ -16,10 +16,10 @@ CXX := clang++
 TARGET := test
 
 # Source files
-SRCS := CPB_V2.cpp ParaHash-V3.cpp
+SRCS := CPB.cpp Para-Hash.cpp
 
 # Header files (for dependency tracking)
-HDRS := ParaHash-V3.h
+HDRS := Para-Hash.h
 
 # Compiler flags
 CXXFLAGS := -O3 -std=c++17 -march=armv8.5-a+crypto \

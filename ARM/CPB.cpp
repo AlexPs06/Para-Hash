@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "ParaHash-V3.h"
+#include "Para-Hash.h"
 
 
 

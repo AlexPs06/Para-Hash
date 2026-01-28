@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <cstring>
 #include <stdlib.h>
-#include "ParaHash-V3.h"
+#include "Para-Hash.h"
 
 void KeyExpansion(const uint8_t* key, uint8x16_t* roundKeys);
 void ParaHash_V3(const uint8_t* input, uint8_t* tag, uint8x16_t *keys, const uint64_t lenght);
