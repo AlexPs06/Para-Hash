@@ -45,3 +45,13 @@ After this we going to get a file called test. To execute the code you need to u
 ./test file.txt
 
 The program recive a parameter that is the name of the file to get the results.
+
+
+
+## Autor
+
+Luis Alejandro Pérez Sarmiento
+
+## Licencia
+
+MIT
