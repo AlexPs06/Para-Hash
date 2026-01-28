@@ -2,31 +2,31 @@ ParaHash-V3 polinomial reduction
 11th Gen Intel(R) Core(TM) i7-11700 @ 2.50GHz
 GCC 11 (C++17)
 Unknown Arch
-Run 2026-01-28 16:15:38
+Run 2026-01-28 16:28:50
 
 WARNING: Binary compiled without ARM crypto extensions!
 
-256 -- 0.00278983 s  (0.272445 cpb) Key generation
-256 -- 0.00381928 s  (0.372976 cpb) Para-Hash
-Tag: db37228cb2b40c2525562b44742e440294aecc0882ad5d6d1fb2ce636c5fc246
-512 -- 0.00574515 s  (0.280525 cpb) Key generation
-512 -- 0.00492679 s  (0.240566 cpb) Para-Hash
-Tag: 204cfb4b253e381f50a88c64021b828454a3617f3e987519b583574c10852ab5
-1024 -- 0.0117615 s  (0.287145 cpb) Key generation
-1024 -- 0.00895133 s  (0.218538 cpb) Para-Hash
-Tag: cb0a12eee241aa5654c88c7853cd9adb0c895f78ca8288f0ea40117361eac44e
-2048 -- 0.0232262 s  (0.283523 cpb) Key generation
-2048 -- 0.0168008 s  (0.205088 cpb) Para-Hash
-Tag: a4d1e951514fac5bb8f6f4a56407a583190c33a613c691d7174631340e41f7a6
-4096 -- 0.0462044 s  (0.282009 cpb) Key generation
-4096 -- 0.0325205 s  (0.198489 cpb) Para-Hash
-Tag: da82a3a164ce189b0c09c91702dd1b9821050e8923aa04512f44dd85d47010a3
-8192 -- 0.0919571 s  (0.280631 cpb) Key generation
-8192 -- 0.0639674 s  (0.195213 cpb) Para-Hash
-Tag: 27b7481b42abf342be14bec0c3809133e879df86d708a0bf32ae35adad78a136
-16384 -- 0.183512 s  (0.280016 cpb) Key generation
-16384 -- 0.127206 s  (0.194101 cpb) Para-Hash
-Tag: afc7f5fb629733ca058ad75855e10ae459eef4a93c9986012d08236448509eaf
-32768 -- 0.366763 s  (0.279818 cpb) Key generation
-32768 -- 0.25587 s  (0.195213 cpb) Para-Hash
-Tag: 01b64f9bee67a995663d876a725ee6121fe6460fb1ab848e6a0e35f1e00e15ad
+256 -- 0.00278347 s  (0.271823 cpb) Key generation
+256 -- 0.00292204 s  (0.285355 cpb) Para-Hash
+Tag: db37228cb2b40c2545ed3908c38a4254f7740c2b84590426a0d8d311b0b99758
+512 -- 0.00622324 s  (0.303869 cpb) Key generation
+512 -- 0.00490998 s  (0.239745 cpb) Para-Hash
+Tag: 204cfb4b253e381fe4a35dc1c7da257c247e6a991e459ea3f0b787cbd8d9c4d6
+1024 -- 0.0117299 s  (0.286374 cpb) Key generation
+1024 -- 0.00894715 s  (0.218436 cpb) Para-Hash
+Tag: cb0a12eee241aa56b1c28402800d2e0b2f8550379cc37eff618d707c06e62662
+2048 -- 0.0233597 s  (0.285153 cpb) Key generation
+2048 -- 0.0167761 s  (0.204786 cpb) Para-Hash
+Tag: a4d1e951514fac5b62dd28d9fd0d7c5882d425730d44707710c4178778f69efa
+4096 -- 0.0460276 s  (0.28093 cpb) Key generation
+4096 -- 0.0324152 s  (0.197847 cpb) Para-Hash
+Tag: da82a3a164ce189b85056c91891a85d1aad6badc39a104c7c1920b6037b942ba
+8192 -- 0.0916546 s  (0.279708 cpb) Key generation
+8192 -- 0.0642156 s  (0.19597 cpb) Para-Hash
+Tag: 27b7481b42abf3427cbba280f66d58223c1fd648f7681a2b7faa3cfc863faf6d
+16384 -- 0.182906 s  (0.279092 cpb) Key generation
+16384 -- 0.127283 s  (0.194219 cpb) Para-Hash
+Tag: afc7f5fb629733ca21d7bd86e369870edd230a3051f0dd5ab95ba7448e4da7d9
+32768 -- 0.366098 s  (0.279311 cpb) Key generation
+32768 -- 0.255105 s  (0.194629 cpb) Para-Hash
+Tag: 01b64f9bee67a9951ab4400dbf81071d8881c2a545773474318c4609d4444488

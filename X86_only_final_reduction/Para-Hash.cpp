@@ -106,9 +106,9 @@ static inline void update_function(__m128i X,
      */
 
     output[0] = _mm_xor_si128(mul_acc[0], output[0]);
-    output[1] = _mm_add_epi64(mul_acc[1], output[1]);
-    output[2] = _mm_add_epi64(mul_acc[2], output[2]);
-    output[3] = _mm_add_epi64(mul_acc[3], output[3]);
+    output[1] = _mm_xor_si128(mul_acc[1], output[1]);
+    output[2] = _mm_xor_si128(mul_acc[2], output[2]);
+    output[3] = _mm_xor_si128(mul_acc[3], output[3]);
 
 
 }
