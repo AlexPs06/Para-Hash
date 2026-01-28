@@ -4,9 +4,9 @@ Para-Hash is a new universal hash function focus on AVX and ARMNEON instruction 
 
 
 
-## Descripción
+## Description
 
-Explicación más detallada de qué hace el proyecto y su propósito.
+A future description of the proyect
 
 ## Proyect structure
 
