@@ -61,6 +61,7 @@ static inline void update_function(__m128i X,
                     __m128i * output)
 {
 
+
     /*
      * Perform two rounds of AES encryption on X using an all-zero round key.
      * The result is reinterpreted as two 64-bit polynomials.
@@ -73,6 +74,9 @@ static inline void update_function(__m128i X,
      */
     __m128i Y_prime = AES_Encrypt_rounds_static_keys( Y, roundKeys_ones, 2);
     
+    
+    
+
     /*
      * Temporary storage for the 128-bit results of carry-less
      * polynomial multiplications (PMULL), reinterpreted as
@@ -95,10 +99,14 @@ static inline void update_function(__m128i X,
     mul_acc[2] = _mm_clmulepi64_si128 (X_prime, Y, 0x00);
     mul_acc[3] = _mm_clmulepi64_si128 (X_prime, Y, 0x11);
 
+    /*
+     * Final reduction step:
+     * Each 128-bit accumulator is reduced to a 64-bit value
+     * x64+x4+x3+x+1
+     * using the GF(2^128) reduction function.
+     */    
     __m128i output_reduction_1 = gf_reduce_128(mul_acc[0], mul_acc[1]);
     __m128i output_reduction_2 = gf_reduce_128(mul_acc[2], mul_acc[3]);
-    
-
 
     /*static inline void
      * Accumulate the results into the output buffer using
@@ -107,8 +115,6 @@ static inline void update_function(__m128i X,
 
     output[0] = _mm_add_epi64(output_reduction_1, output[0]);
     output[1] = _mm_add_epi64(output_reduction_2, output[1]);
-
-   
 
 
 }
@@ -193,7 +199,8 @@ void ParaHash_V3(const uint8_t* input,
          */
         __m128i generate_key_x = keys[i];
         __m128i generate_key_y = keys[i+1];
-
+        
+        
         /*
          * XOR input blocks with the generated masks and
          * reinterpret them as 32-bit word vectors.
@@ -209,15 +216,6 @@ void ParaHash_V3(const uint8_t* input,
 
     }
 
-    /*
-     * Final reduction step:
-     * Each 128-bit accumulator is reduced to a 64-bit value
-     * x64+x4+x3+x+1
-     * using the GF(2^128) reduction function.
-     */    
-
-
-    
 
     /*
      * Final tag generation.
@@ -265,6 +263,8 @@ void generate_keys(__m128i * roundKeys, uint64_t length, __m128i * obtained_keys
         __m128i idx1 = index;
         index = _mm_add_epi32(index, const_vec);
 
+
+        
         /*
          * Generate a pseudo-random mask for block X
          * using AES with roundKeys_1 and the current index.
@@ -273,14 +273,16 @@ void generate_keys(__m128i * roundKeys, uint64_t length, __m128i * obtained_keys
             AES_Encrypt_rounds(idx0,
                                roundKeys, 8);
 
-
+       
+        
         /*
          * Generate a pseudo-random mask for block Y.
          */
         __m128i generate_key_y =
             AES_Encrypt_rounds(idx1,
                                roundKeys, 8);
-
+        
+        
         /*
          * Save the keys in memory.
          */
@@ -292,9 +294,14 @@ void generate_keys(__m128i * roundKeys, uint64_t length, __m128i * obtained_keys
 
 static inline __m128i AES_Encrypt_rounds(__m128i tmp, __m128i *key, int rounds){
 	int j;
+
+
 	tmp = _mm_xor_si128 (tmp,key[0]);
-	for (j=1; j<rounds; j++)  tmp = _mm_aesenc_si128 (tmp,key[j]);
-	tmp = _mm_aesenclast_si128 (tmp,key[j]);
+	for (j=1; j<rounds; j++){
+        tmp = _mm_aesenc_si128 (tmp,key[j]);
+    }  
+	tmp = _mm_aesenc_si128 (tmp,key[j]);
+   
     return tmp;
 }
 
@@ -302,7 +309,7 @@ static inline __m128i AES_Encrypt_rounds_static_keys(__m128i tmp, __m128i key, i
 	int j;
 	tmp = _mm_xor_si128 (tmp,key);
 	for (j=1; j<rounds; j++)  tmp = _mm_aesenc_si128 (tmp,key);
-	tmp = _mm_aesenclast_si128 (tmp,key);
+	tmp = _mm_aesenc_si128 (tmp,key);
     return tmp;
 }
 
