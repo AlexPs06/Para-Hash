@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#define tag_size 32
+#define tag_size 64
 
 
 

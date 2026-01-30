@@ -74,9 +74,6 @@ static inline void update_function(__m128i X,
      */
     __m128i Y_prime = AES_Encrypt_rounds_static_keys( Y, roundKeys_ones, 2);
     
-    
-    
-
     /*
      * Temporary storage for the 128-bit results of carry-less
      * polynomial multiplications (PMULL), reinterpreted as
@@ -99,24 +96,16 @@ static inline void update_function(__m128i X,
     mul_acc[2] = _mm_clmulepi64_si128 (X_prime, Y, 0x00);
     mul_acc[3] = _mm_clmulepi64_si128 (X_prime, Y, 0x11);
 
-    /*
-     * Final reduction step:
-     * Each 128-bit accumulator is reduced to a 64-bit value
-     * x64+x4+x3+x+1
-     * using the GF(2^128) reduction function.
-     */    
-    __m128i output_reduction_1 = gf_reduce_128(mul_acc[0], mul_acc[1]);
-    __m128i output_reduction_2 = gf_reduce_128(mul_acc[2], mul_acc[3]);
-
+  
     /*static inline void
      * Accumulate the results into the output buffer using
      * standard 64-bit integer addition (with carry per lane).
      */
 
-    output[0] = _mm_add_epi64(output_reduction_1, output[0]);
-    output[1] = _mm_add_epi64(output_reduction_2, output[1]);
-
-
+    output[0] = _mm_xor_si128(mul_acc[0], output[0]);
+    output[1] = _mm_xor_si128(mul_acc[1], output[1]);
+    output[2] = _mm_xor_si128(mul_acc[2], output[2]);
+    output[3] = _mm_xor_si128(mul_acc[3], output[3]);
 }
 
 
@@ -164,14 +153,12 @@ void ParaHash_V3(const uint8_t* input,
      * Each entry stores a 128-bit value split into two 64-bit lanes.
      */
     __m128i output[4];
-    uint64_t   output_reduction[4];
     
     /*
      * Initialize accumulators to zero.
      */
     for (i = 0; i < 4; i++) {
         output[i] = _mm_setzero_si128();
-        output_reduction[i] = 0;
     }
 
     /*
@@ -222,7 +209,7 @@ void ParaHash_V3(const uint8_t* input,
      * Currently, the tag is obtained by reinterpreting the
      * reduced output values as a byte array.
      */
-    memcpy(tag, output, 32);  
+    memcpy(tag, output, 64);  
 
 }
 
