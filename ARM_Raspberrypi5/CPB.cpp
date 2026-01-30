@@ -16,7 +16,7 @@
 // #include <sys/sysctl.h>
 #include <sstream>
 
-#define tag_size 32
+#define tag_size 64
 extern void ParaHash_V3(
     const uint8_t* input, uint8_t* tag, uint8x16_t *roundKeys_1, const uint64_t lenght
 );

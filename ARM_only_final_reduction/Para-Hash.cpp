@@ -314,8 +314,6 @@ static inline void update_function(uint32x4_t X,
     mul_acc[1] = vreinterpretq_u64_p128(vmull_p64(high_X[0], high_Y_prime[0]));
     mul_acc[2] = vreinterpretq_u64_p128(vmull_p64(low_X_prime[0],  low_Y[0]));
     mul_acc[3] = vreinterpretq_u64_p128(vmull_p64(high_X_prime[0],  high_Y[0]));
-
-
    
     /*
      * Accumulate the results into the output buffer using

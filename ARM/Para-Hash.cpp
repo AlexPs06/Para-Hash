@@ -315,27 +315,14 @@ static inline void update_function(uint32x4_t X,
     mul_acc[2] = vreinterpretq_u64_p128(vmull_p64(low_X_prime[0],  low_Y[0]));
     mul_acc[3] = vreinterpretq_u64_p128(vmull_p64(high_X_prime[0],  high_Y[0]));
 
-
-    /*
-     * Final reduction step:
-     * Each 128-bit accumulator is reduced to a 64-bit value
-     * x64+x4+x3+x+1
-     * using the GF(2^128) reduction function.
-     */
-    uint64x2_t output_reduction_1;
-    output_reduction_1[0] =  gf_reduce_128(mul_acc[0][1], mul_acc[0][0]);
-    output_reduction_1[1] =  gf_reduce_128(mul_acc[1][1], mul_acc[1][0]);
-
-    uint64x2_t output_reduction_2;
-    output_reduction_2[0] =  gf_reduce_128(mul_acc[2][1], mul_acc[2][0]);
-    output_reduction_2[1] =  gf_reduce_128(mul_acc[3][1], mul_acc[3][0]);
-
     /*
      * Accumulate the results into the output buffer using
      * standard 64-bit integer addition (with carry per lane).
      */
-    output[0] = vaddq_u64(output_reduction_1, output[0]);
-    output[1] = vaddq_u64(output_reduction_2, output[1]);
+    output[0] = veorq_u64(mul_acc[0], output[0]);
+    output[1] = veorq_u64(mul_acc[1], output[1]);
+    output[2] = veorq_u64(mul_acc[2], output[2]);
+    output[3] = veorq_u64(mul_acc[3], output[3]);
 
     
 
@@ -419,7 +406,7 @@ void ParaHash_V3(const uint8_t* input,
      * Currently, the tag is obtained by reinterpreting the
      * reduced output values as a byte array.
      */
-    memcpy(tag, output, 32);  
+    memcpy(tag, output, 64);  
 
 }
 
