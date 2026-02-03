@@ -1,4 +1,4 @@
-ParaHash-V3 polinomial reduction
+Para-Hash Carryless
 Apple M1
 Clang C++17.0.0 (C++17)
 ARM64 + NEON + Crypto

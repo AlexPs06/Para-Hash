@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
 
     std::ofstream file(argv[1]);
 
-    file << "ParaHash-V3 polinomial reduction\n";
+    file << "Para-Hash Carryless\n";
     file << get_cpu_name() << "\n";
     file << get_compiler_info() << " (" << get_cpp_standard() << ")\n";
     file << get_arch_info() << "\n";
