@@ -2,29 +2,29 @@ ParaHash-V3 polinomial reduction
 Raspberry Pi 5 Model B Rev 1.0
 Clang C++14.0.6 (C++17)
 ARM64 + NEON + Crypto
-Run 2026-01-30 12:04:48
+Run 2026-02-02 23:03:11
 
-256 -- 0.011254 s  (1.40675 cpb) Key generation
-256 -- 0.0102037 s  (1.27546 cpb) Para-Hash
+256 -- 0.0101898 s  (0.955291 cpb) Key generation
+256 -- 0.00825331 s  (0.773748 cpb) Para-Hash
 Tag: db37228cb2b40c2545ed3908c38a4254f7740c2b84590426a0d8d311b0b99758
-512 -- 0.0191576 s  (1.19735 cpb) Key generation
-512 -- 0.0125919 s  (0.786993 cpb) Para-Hash
+512 -- 0.0203426 s  (0.953559 cpb) Key generation
+512 -- 0.0141279 s  (0.662246 cpb) Para-Hash
 Tag: 204cfb4b253e381fe4a35dc1c7da257c247e6a991e459ea3f0b787cbd8d9c4d6
-1024 -- 0.0358364 s  (1.11989 cpb) Key generation
-1024 -- 0.022818 s  (0.713063 cpb) Para-Hash
+1024 -- 0.0409628 s  (0.960066 cpb) Key generation
+1024 -- 0.016475 s  (0.386132 cpb) Para-Hash
 Tag: cb0a12eee241aa56b1c28402800d2e0b2f8550379cc37eff618d707c06e62662
-2048 -- 0.0576597 s  (0.900933 cpb) Key generation
-2048 -- 0.0310754 s  (0.485552 cpb) Para-Hash
+2048 -- 0.0507203 s  (0.594379 cpb) Key generation
+2048 -- 0.0308109 s  (0.361066 cpb) Para-Hash
 Tag: a4d1e951514fac5b62dd28d9fd0d7c5882d425730d44707710c4178778f69efa
-4096 -- 0.101532 s  (0.793217 cpb) Key generation
-4096 -- 0.0602667 s  (0.470834 cpb) Para-Hash
+4096 -- 0.101452 s  (0.594443 cpb) Key generation
+4096 -- 0.0603884 s  (0.353839 cpb) Para-Hash
 Tag: da82a3a164ce189b85056c91891a85d1aad6badc39a104c7c1920b6037b942ba
-8192 -- 0.202886 s  (0.792522 cpb) Key generation
-8192 -- 0.11934 s  (0.466172 cpb) Para-Hash
+8192 -- 0.202796 s  (0.594129 cpb) Key generation
+8192 -- 0.11979 s  (0.350946 cpb) Para-Hash
 Tag: 27b7481b42abf3427cbba280f66d58223c1fd648f7681a2b7faa3cfc863faf6d
-16384 -- 0.406721 s  (0.794378 cpb) Key generation
-16384 -- 0.237694 s  (0.464246 cpb) Para-Hash
+16384 -- 0.406711 s  (0.595769 cpb) Key generation
+16384 -- 0.237391 s  (0.347741 cpb) Para-Hash
 Tag: afc7f5fb629733ca21d7bd86e369870edd230a3051f0dd5ab95ba7448e4da7d9
-32768 -- 0.812189 s  (0.793153 cpb) Key generation
-32768 -- 0.477699 s  (0.466503 cpb) Para-Hash
+32768 -- 0.812341 s  (0.594976 cpb) Key generation
+32768 -- 0.477672 s  (0.349858 cpb) Para-Hash
 Tag: 01b64f9bee67a9951ab4400dbf81071d8881c2a545773474318c4609d4444488
