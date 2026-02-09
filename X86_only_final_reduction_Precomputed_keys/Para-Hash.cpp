@@ -23,7 +23,7 @@
 using namespace std;
 
 
-void ParaHash(const uint8_t* input,uint8_t* tag,__m128i * roundKeys, const uint64_t lenght);
+void ParaHash_V3(const uint8_t* input,uint8_t* tag,__m128i * keys, const uint64_t lenght);
 void AES_128_Key_Expansion(const unsigned char *userkey, void *key);
 static inline void AES_encrypt(__m128i tmp, __m128i *out,__m128i *key, int rounds);
 static inline __m128i gf_reduce_128(__m128i x, __m128i y);
@@ -74,6 +74,9 @@ static inline void update_function(__m128i X,
      */
     __m128i Y_prime = AES_Encrypt_rounds_static_keys( Y, roundKeys_ones, 2);
     
+    
+    
+
     /*
      * Temporary storage for the 128-bit results of carry-less
      * polynomial multiplications (PMULL), reinterpreted as
@@ -106,6 +109,8 @@ static inline void update_function(__m128i X,
     output[1] = _mm_xor_si128(mul_acc[1], output[1]);
     output[2] = _mm_xor_si128(mul_acc[2], output[2]);
     output[3] = _mm_xor_si128(mul_acc[3], output[3]);
+
+
 }
 
 
@@ -140,26 +145,13 @@ static inline __m128i gf_reduce_128(__m128i x, __m128i y)
 }
 
 
-void ParaHash(const uint8_t* input,
+void ParaHash_V3(const uint8_t* input,
                  uint8_t* tag,
-                 __m128i * roundKeys,
+                 __m128i * keys,
                  const uint64_t lenght)
 {
  
     uint64_t i = 0;
-
-     /*
-     * Define a constant counter increment (used as domain separator /
-     * block index for key generation).
-     */
-    uint32_t constant = 1;
-
-    /*
-     * Vectorized version of the constant and the running index.
-     */
-    __m128i const_vec = _mm_set1_epi32(constant);
-    __m128i index     = _mm_set1_epi32(constant);
-
 
     /*
      * Accumulators for the hash computation.
@@ -194,35 +186,13 @@ void ParaHash(const uint8_t* input,
     
     for (i = 0; i < size - 1; i = i + 2) {
 
-        
         /*
-        * Extra inside index for a better pipeline for the processor.
-        */
-        __m128i idx0 = index;
-        index = _mm_add_epi32(index, const_vec);
-        __m128i idx1 = index;
-        index = _mm_add_epi32(index, const_vec);
-
-
-        
-        /*
-         * Generate a pseudo-random mask for block X
-         * using AES with roundKeys_1 and the current index.
+         * Load keys blocks into NEON registers.
          */
-        __m128i generate_key_x =
-            AES_Encrypt_rounds(idx0,
-                               roundKeys, 8);
-
-       
+        __m128i generate_key_x = keys[i];
+        __m128i generate_key_y = keys[i+1];
         
-        /*
-         * Generate a pseudo-random mask for block Y.
-         */
-        __m128i generate_key_y =
-            AES_Encrypt_rounds(idx1,
-                               roundKeys, 8);
-
-
+        
         /*
          * XOR input blocks with the generated masks and
          * reinterpret them as 32-bit word vectors.
@@ -239,12 +209,24 @@ void ParaHash(const uint8_t* input,
     }
 
 
+
+      /*
+     * Final reduction step:
+     * Each 128-bit accumulator is reduced to a 64-bit value
+     * x64+x4+x3+x+1
+     * using the GF(2^128) reduction function.
+     */    
+    __m128i output_reduction[2];
+    output_reduction[0] = gf_reduce_128(output[0], output[1]);
+    output_reduction[1] = gf_reduce_128(output[2], output[3]);
+
+
     /*
      * Final tag generation.
      * Currently, the tag is obtained by reinterpreting the
      * reduced output values as a byte array.
      */
-    memcpy(tag, output, 64);  
+    memcpy(tag, output_reduction, 32);  
 
 }
 

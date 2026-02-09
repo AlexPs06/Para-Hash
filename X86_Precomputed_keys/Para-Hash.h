@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <immintrin.h>
 
-void ParaHash(const uint8_t* input,
+void ParaHash_V3(const uint8_t* input,
                  uint8_t* tag,
-                 __m128i* roundKeys,
+                 __m128i* keys,
                  uint64_t length);
 
 void AES_128_Key_Expansion(const unsigned char* userkey,

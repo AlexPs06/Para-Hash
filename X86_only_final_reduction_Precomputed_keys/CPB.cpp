@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#define tag_size 64
+#define tag_size 32
 
 
 
@@ -201,10 +201,10 @@ int main(int argc, char **argv) {
         start = std::chrono::steady_clock::now();
 
         for (int it = 0; it < ITER; it++) {
-            ParaHash(
+            ParaHash_V3(
                 msg.data(),
                 output,
-                roundKeys,
+                obtained_keys,
                 size
             );
 

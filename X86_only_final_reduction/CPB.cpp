@@ -201,10 +201,10 @@ int main(int argc, char **argv) {
         start = std::chrono::steady_clock::now();
 
         for (int it = 0; it < ITER; it++) {
-            ParaHash_V3(
+            ParaHash(
                 msg.data(),
                 output,
-                obtained_keys,
+                roundKeys,
                 size
             );
 
