@@ -16,8 +16,8 @@
 extern "C" {
 #endif
 
-void ParaHash_V3(
-    const uint8_t* input, uint8_t* tag, uint8x16_t *keys, const uint64_t lenght
+void ParaHash(
+    const uint8_t* input, uint8_t* tag, uint8x16_t *roundKeys, const uint64_t lenght
 );
 void generate_keys(
     uint8x16_t* roundKeys, uint64_t length, uint8x16_t * obtained_keys

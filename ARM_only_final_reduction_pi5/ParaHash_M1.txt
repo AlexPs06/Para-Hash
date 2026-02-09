@@ -1,0 +1,30 @@
+ParaHash-V3 polinomial reduction
+Unknown CPU
+Clang C++17.0.0 (C++17)
+ARM64 + NEON + Crypto
+Run 2026-02-09 15:14:45
+
+256 -- 0.00569346 s  (0.711682 cpb) Key generation
+256 -- 0.00922387 s  (1.15298 cpb) Para-Hash
+Tag: db37228cb2b40c2545ed3908c38a4254f7740c2b84590426a0d8d311b0b99758
+512 -- 0.00820042 s  (0.512526 cpb) Key generation
+512 -- 0.0122053 s  (0.762833 cpb) Para-Hash
+Tag: 204cfb4b253e381fe4a35dc1c7da257c247e6a991e459ea3f0b787cbd8d9c4d6
+1024 -- 0.0122634 s  (0.38323 cpb) Key generation
+1024 -- 0.0167248 s  (0.52265 cpb) Para-Hash
+Tag: cb0a12eee241aa56b1c28402800d2e0b2f8550379cc37eff618d707c06e62662
+2048 -- 0.0175833 s  (0.274739 cpb) Key generation
+2048 -- 0.0231266 s  (0.361353 cpb) Para-Hash
+Tag: a4d1e951514fac5b62dd28d9fd0d7c5882d425730d44707710c4178778f69efa
+4096 -- 0.0287881 s  (0.224907 cpb) Key generation
+4096 -- 0.0423617 s  (0.330951 cpb) Para-Hash
+Tag: da82a3a164ce189b85056c91891a85d1aad6badc39a104c7c1920b6037b942ba
+8192 -- 0.05696 s  (0.2225 cpb) Key generation
+8192 -- 0.0838623 s  (0.327587 cpb) Para-Hash
+Tag: 27b7481b42abf3427cbba280f66d58223c1fd648f7681a2b7faa3cfc863faf6d
+16384 -- 0.115756 s  (0.226086 cpb) Key generation
+16384 -- 0.166891 s  (0.325959 cpb) Para-Hash
+Tag: afc7f5fb629733ca21d7bd86e369870edd230a3051f0dd5ab95ba7448e4da7d9
+32768 -- 0.228814 s  (0.223451 cpb) Key generation
+32768 -- 0.361094 s  (0.352631 cpb) Para-Hash
+Tag: 01b64f9bee67a9951ab4400dbf81071d8881c2a545773474318c4609d4444488

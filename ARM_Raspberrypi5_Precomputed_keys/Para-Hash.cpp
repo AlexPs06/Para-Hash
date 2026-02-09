@@ -6,7 +6,7 @@
 #include "Para-Hash.h"
 
 void KeyExpansion(const uint8_t* key, uint8x16_t* roundKeys);
-void ParaHash(const uint8_t* input, uint8_t* tag, uint8x16_t *roundKeys, const uint64_t lenght);
+void ParaHash_V3(const uint8_t* input, uint8_t* tag, uint8x16_t *keys, const uint64_t lenght);
 void generate_keys(uint8x16_t* roundKeys, uint64_t length, uint8x16_t * obtained_keys);
 uint8x16_t AES_Encrypt_rounds( uint8x16_t block, const uint8x16_t* roundKeys, int rounds);
 
@@ -31,6 +31,7 @@ static const uint8x16_t roundKeys_ones[Nr + 1] = {
         0x01, 0x01, 0x01, 0x01
     }
 };
+
 
 unsigned char Sbox[256]={
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -316,8 +317,6 @@ static inline void update_function(uint32x4_t X,
     mul_acc[2] = vreinterpretq_u64_p128(vmull_p64(low_X_prime[0],  low_Y[0]));
     mul_acc[3] = vreinterpretq_u64_p128(vmull_p64(high_X_prime[0],  high_Y[0]));
 
-
-   
     /*
      * Accumulate the results into the output buffer using
      * standard 64-bit integer addition (with carry per lane).
@@ -326,7 +325,6 @@ static inline void update_function(uint32x4_t X,
     output[1] = veorq_u64(mul_acc[1], output[1]);
     output[2] = veorq_u64(mul_acc[2], output[2]);
     output[3] = veorq_u64(mul_acc[3], output[3]);
-
     
 
 
@@ -334,37 +332,27 @@ static inline void update_function(uint32x4_t X,
 }
 
 
-void ParaHash(const uint8_t* input,
+void ParaHash_V3(const uint8_t* input,
                  uint8_t* tag,
-                 uint8x16_t * roundKeys,
+                 uint8x16_t * keys,
                  const uint64_t lenght)
 {
  
     uint64_t i = 0;
-
-     /*
-     * Define a constant counter increment (used as domain separator /
-     * block index for key generation).
-     */
-    uint32_t constant = 1;
-
-    /*
-     * Vectorized version of the constant and the running index.
-     */
-    uint32x4_t const_vec = vdupq_n_u32(constant);
-    uint32x4_t index     = vdupq_n_u32(constant);
 
     /*
      * Accumulators for the hash computation.
      * Each entry stores a 128-bit value split into two 64-bit lanes.
      */
     uint64x2_t output[4];
+    uint64_t   output_reduction[4];
 
     /*
      * Initialize accumulators to zero.
      */
     for (i = 0; i < 4; i++) {
         output[i] = vdupq_n_u64(0);
+        output_reduction[i] = 0;
     }
 
     /*
@@ -388,30 +376,10 @@ void ParaHash(const uint8_t* input,
         uint8x16_t block_y = vld1q_u8(input + 16*(i+1));
 
         /*
-        * Extra inside index for a better pipeline for the processor.
-        */
-        uint32x4_t idx0 = index;
-        index = vaddq_u32(index, const_vec);
-        uint32x4_t idx1 = index;
-        index = vaddq_u32(index, const_vec);
-
-        /*
-         * Generate a pseudo-random mask for block X
-         * using AES with roundKeys_1 and the current index.
+         * Load keys blocks into NEON registers.
          */
-        uint8x16_t generate_key_x =
-            AES_Encrypt_rounds(vreinterpretq_u8_u32(idx0),
-                               roundKeys, 8);
-
-        
-
-        /*
-         * Generate a pseudo-random mask for block Y.
-         */
-        uint8x16_t generate_key_y =
-            AES_Encrypt_rounds(vreinterpretq_u8_u32(idx1),
-                               roundKeys, 8);
-
+        uint8x16_t generate_key_x = keys[i];
+        uint8x16_t generate_key_y = keys[i+1];
 
 
         
@@ -434,29 +402,12 @@ void ParaHash(const uint8_t* input,
       
     }
 
-
-
-     /*
-     * Final reduction step:
-     * Each 128-bit accumulator is reduced to a 64-bit value
-     * x64+x4+x3+x+1
-     * using the GF(2^128) reduction function.
-     */
-    uint64x2_t output_reduction[2];
-    output_reduction[0][0] =  gf_reduce_128(output[0][1], output[0][0]);
-    output_reduction[0][1] =  gf_reduce_128(output[1][1], output[1][0]);
-
-    // uint64x2_t output_reduction_2;
-    output_reduction[1][0] =  gf_reduce_128(output[2][1], output[2][0]);
-    output_reduction[1][1] =  gf_reduce_128(output[3][1], output[3][0]);
-
-
     /*
      * Final tag generation.
      * Currently, the tag is obtained by reinterpreting the
      * reduced output values as a byte array.
      */
-    memcpy(tag, output_reduction, 32);  
+    memcpy(tag, output, 64);  
 
 }
 

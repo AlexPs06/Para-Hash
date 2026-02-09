@@ -6,7 +6,7 @@
 #include "Para-Hash.h"
 
 void KeyExpansion(const uint8_t* key, uint8x16_t* roundKeys);
-void ParaHash_V3(const uint8_t* input, uint8_t* tag, uint8x16_t *keys, const uint64_t lenght);
+void ParaHash(const uint8_t* input, uint8_t* tag, uint8x16_t *roundKeys, const uint64_t lenght);
 void generate_keys(uint8x16_t* roundKeys, uint64_t length, uint8x16_t * obtained_keys);
 uint8x16_t AES_Encrypt_rounds( uint8x16_t block, const uint8x16_t* roundKeys, int rounds);
 
@@ -332,13 +332,26 @@ static inline void update_function(uint32x4_t X,
 }
 
 
-void ParaHash_V3(const uint8_t* input,
+void ParaHash(const uint8_t* input,
                  uint8_t* tag,
-                 uint8x16_t * keys,
+                 uint8x16_t * roundKeys,
                  const uint64_t lenght)
 {
  
     uint64_t i = 0;
+
+    /*
+     * Define a constant counter increment (used as domain separator /
+     * block index for key generation).
+     */
+    uint32_t constant = 1;
+
+    /*
+     * Vectorized version of the constant and the running index.
+     */
+    uint32x4_t const_vec = vdupq_n_u32(constant);
+    uint32x4_t index     = vdupq_n_u32(constant);
+
 
     /*
      * Accumulators for the hash computation.
@@ -376,11 +389,29 @@ void ParaHash_V3(const uint8_t* input,
         uint8x16_t block_y = vld1q_u8(input + 16*(i+1));
 
         /*
-         * Load keys blocks into NEON registers.
-         */
-        uint8x16_t generate_key_x = keys[i];
-        uint8x16_t generate_key_y = keys[i+1];
+        * Extra inside index for a better pipeline for the processor.
+        */
+        uint32x4_t idx0 = index;
+        index = vaddq_u32(index, const_vec);
+        uint32x4_t idx1 = index;
+        index = vaddq_u32(index, const_vec);
 
+        /*
+         * Generate a pseudo-random mask for block X
+         * using AES with roundKeys_1 and the current index.
+         */
+        uint8x16_t generate_key_x =
+            AES_Encrypt_rounds(vreinterpretq_u8_u32(idx0),
+                               roundKeys, 8);
+
+        
+
+        /*
+         * Generate a pseudo-random mask for block Y.
+         */
+        uint8x16_t generate_key_y =
+            AES_Encrypt_rounds(vreinterpretq_u8_u32(idx1),
+                               roundKeys, 8);
 
         
 

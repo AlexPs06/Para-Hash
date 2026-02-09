@@ -13,11 +13,12 @@
 #include <ctime>
 #include <iomanip>
 #include <string>
+// #include <sys/sysctl.h>
 #include <sstream>
 
-#define tag_size 32
-extern void ParaHash(
-    const uint8_t* input, uint8_t* tag, uint8x16_t *roundKeys, const uint64_t lenght
+#define tag_size 64
+extern void ParaHash_V3(
+    const uint8_t* input, uint8_t* tag, uint8x16_t *roundKeys_1, const uint64_t lenght
 );
 
 void write_tag_hex(std::ofstream& file, const uint8_t* tag, size_t len = 64) {
@@ -118,14 +119,14 @@ int main(int argc, char **argv) {
 		printf("Usage: [output_filename]\n");
 		return 0;
 	} 
-    constexpr double CPU_FREQ = 3.2e9; // Apple M1 ≈ 3.2 GHz Cortex a76 ≈ 2.4
+    constexpr double CPU_FREQ = 2.4e9; // Apple M1 ≈ 3.2 GHz
     constexpr int ITER = 100000;
 
 
 
     std::ofstream file(argv[1]);
 
-    file << "ParaHash-V3 polinomial reduction\n";
+    file << "ParaHash CarryLess\n";
     file << get_cpu_name() << "\n";
     file << get_compiler_info() << " (" << get_cpp_standard() << ")\n";
     file << get_arch_info() << "\n";
@@ -199,10 +200,10 @@ int main(int argc, char **argv) {
         start = std::chrono::steady_clock::now();
 
         for (int it = 0; it < ITER; it++) {
-            ParaHash(
+            ParaHash_V3(
                 msg.data(),
                 output,
-                roundKeys,
+                obtained_keys,
                 size
             );
 
