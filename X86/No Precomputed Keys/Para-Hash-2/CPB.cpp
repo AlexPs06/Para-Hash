@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-#define tag_size 64
+#define tag_size 32
 
 
 
@@ -123,27 +123,52 @@ std::string get_datetime() {
 
 int main(int argc, char **argv) {
 
-    if ((argc < 1) || (argc > 2)) {
-		printf("Usage: [output_filename]\n");
+     if ((argc < 2) || (argc > 3)) {
+		printf("Usage: ./test [base_frequency_GHz] [output_filename]\n");
 		return 0;
 	} 
-    constexpr double CPU_FREQ = 2.5e9; // Apple M1 ≈ 3.2 GHz
+    
+    double CPU_FREQ = std::atof(argv[1]) * 1.e9; // Apple M1 ≈ 3.2 GHz
     constexpr int ITER = 100000;
+    std::ofstream file(argv[2]);
 
-
-
-    std::ofstream file(argv[1]);
-
-    file << "ParaHash-V3 polinomial reduction\n";
+    file << "Para-Hash-2 polinomial reduction\n";
     file << get_cpu_name() << "\n";
     file << get_compiler_info() << " (" << get_cpp_standard() << ")\n";
     file << get_arch_info() << "\n";
     file << "Run " << get_datetime() << "\n\n";
 
+    #if defined(__aarch64__) || defined(__arm__)
+        file << "Architecture: ARM\n";
 
-    #if !defined(__ARM_FEATURE_CRYPTO)
-    file << "WARNING: Binary compiled without ARM crypto extensions!\n\n";
+    #if defined(__ARM_FEATURE_CRYPTO)
+        file << "ARM Crypto Extensions: ENABLED\n";
+    #else
+        file << "ARM Crypto Extensions: DISABLED\n";
     #endif
+
+    #elif defined(__x86_64__) || defined(__i386__)
+        file << "Architecture: x86\n";
+
+        #if defined(__AVX2__)
+            file << "AVX2: ENABLED\n";
+        #else
+            file << "AVX2: DISABLED\n";
+        #endif
+
+        #if defined(__AES__)
+            file << "AES-NI: ENABLED\n";
+        #else
+            file << "AES-NI: DISABLED\n";
+        #endif
+
+        #if defined(__PCLMUL__)
+            file << "PCLMULQDQ: ENABLED\n";
+        #else
+            file << "PCLMULQDQ: DISABLED\n";
+        #endif
+    #endif
+
 
     // Dummy round keys
     alignas (16) uint8_t key[] = "abcdefghijklmnop";    
@@ -191,9 +216,9 @@ int main(int argc, char **argv) {
         double cycles = seconds * CPU_FREQ;
         double cpb = cycles / total_bytes;
 
-        file << size << " -- "
-             << seconds << " s  ("
-             << cpb << " cpb) Key generation\n";
+        // file << size << " -- "
+        //      << seconds << " s  ("
+        //      << cpb << " cpb) Key generation\n";
 
 
         clobber_memory();
@@ -201,10 +226,10 @@ int main(int argc, char **argv) {
         start = std::chrono::steady_clock::now();
 
         for (int it = 0; it < ITER; it++) {
-            ParaHash(
+            ParaHash_V3(
                 msg.data(),
                 output,
-                roundKeys,
+                obtained_keys,
                 size
             );
 
