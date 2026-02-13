@@ -1,0 +1,32 @@
+Para-Hash-2 Polinomial Reduction Precomputed Keys
+Apple M1
+Clang C++17.0.0 (C++17)
+ARM64 + NEON + Crypto
+Run 2026-02-13 16:17:07
+
+Architecture: ARM
+ARM Crypto Extensions: ENABLED
+256 -- 0.00791671 s  (0.989588 cpb) Key generation
+256 -- 0.003969 s  (0.496125 cpb) Para-Hash
+Tag: db37228cb2b40c2545ed3908c38a4254f7740c2b84590426a0d8d311b0b99758
+512 -- 0.00969675 s  (0.606047 cpb) Key generation
+512 -- 0.005659 s  (0.353687 cpb) Para-Hash
+Tag: 204cfb4b253e381fe4a35dc1c7da257c247e6a991e459ea3f0b787cbd8d9c4d6
+1024 -- 0.01479 s  (0.462186 cpb) Key generation
+1024 -- 0.00772858 s  (0.241518 cpb) Para-Hash
+Tag: cb0a12eee241aa56b1c28402800d2e0b2f8550379cc37eff618d707c06e62662
+2048 -- 0.0209715 s  (0.32768 cpb) Key generation
+2048 -- 0.0104399 s  (0.163124 cpb) Para-Hash
+Tag: a4d1e951514fac5b62dd28d9fd0d7c5882d425730d44707710c4178778f69efa
+4096 -- 0.0313935 s  (0.245262 cpb) Key generation
+4096 -- 0.016897 s  (0.132007 cpb) Para-Hash
+Tag: da82a3a164ce189b85056c91891a85d1aad6badc39a104c7c1920b6037b942ba
+8192 -- 0.0578016 s  (0.225788 cpb) Key generation
+8192 -- 0.0348703 s  (0.136212 cpb) Para-Hash
+Tag: 27b7481b42abf3427cbba280f66d58223c1fd648f7681a2b7faa3cfc863faf6d
+16384 -- 0.114898 s  (0.22441 cpb) Key generation
+16384 -- 0.0653447 s  (0.127626 cpb) Para-Hash
+Tag: afc7f5fb629733ca21d7bd86e369870edd230a3051f0dd5ab95ba7448e4da7d9
+32768 -- 0.22954 s  (0.22416 cpb) Key generation
+32768 -- 0.130487 s  (0.127429 cpb) Para-Hash
+Tag: 01b64f9bee67a9951ab4400dbf81071d8881c2a545773474318c4609d4444488
